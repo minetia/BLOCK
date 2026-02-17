@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BLOCK 1: SATOSHI CITY (FIXED)</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-red: #ff003c;
+            --neon-cyan: #00f3ff;
+            --neon-gold: #fcee0a;
+            --text-main: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg); color: var(--text-main); 
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh; overflow: hidden; 
+            display: flex; flex-direction: column;
+            text-transform: uppercase;
+        }
+
+        /* CRT 모니터 효과 */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* 공통 UI */
+        .screen {
+            position: absolute; width: 100%; height: 100%; padding: 20px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; transition: opacity 0.5s; z-index: 10;
+        }
+        .screen.active { display: flex; animation: fadeIn 1s; }
+
+        h1 { font-size: 2.5rem; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); margin-bottom: 10px; }
+        p { font-family: 'Noto Serif KR', serif; font-size: 1rem; line-height: 1.6; max-width: 600px; margin-bottom: 30px; text-transform: none; }
+        
+        .status-bar {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 15px;
+            display: flex; justify-content: space-between; border-bottom: 1px solid #333;
+            background: rgba(0,0,0,0.8); z-index: 100;
+        }
+        .hp-bar { color: var(--neon-red); font-weight: bold; }
+
+        /* 버튼 스타일 */
+        .btn {
+            background: #000; border: 2px solid var(--neon-cyan); color: var(--neon-cyan);
+            padding: 15px 40px; font-size: 1.2rem; font-family: 'Orbitron'; font-weight: bold;
+            cursor: pointer; transition: 0.1s; margin: 10px; text-transform: uppercase;
+            box-shadow: 0 0 10px var(--neon-cyan); z-index: 20;
+        }
+        .btn:active { transform: scale(0.95); background: var(--neon-cyan); color: #000; }
+        .btn-red { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
+        .btn-red:active { background: var(--neon-red); color: #000; }
+
+        /* 차트 및 게임 요소 */
+        .chart-wrapper { width: 100%; height: 300px; border: 1px solid #333; margin-bottom: 20px; opacity: 0.8; }
+        .hack-progress { width: 80%; height: 30px; border: 2px solid #333; padding: 2px; margin: 20px 0; }
+        .hack-bar { width: 0%; height: 100%; background: var(--neon-gold); transition: width 0.1s; }
+
+        /* 애니메이션 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-2px, 2px) } 40% { transform: translate(-2px, -2px) } 60% { transform: translate(2px, 2px) } 80% { transform: translate(2px, -2px) } 100% { transform: translate(0) } }
+        .glitch { animation: glitch 0.2s infinite; color: var(--neon-red) !important; }
+        .typing::after { content: '|'; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="status-bar">
+        <div>ID: PLAYER_1</div>
+        <div class="hp-bar">LIFE(BTC): <span id="user-btc">1.000</span></div>
+    </div>
+
+    <div id="scene-intro" class="screen active">
+        <h1 class="typing">THE BLOCK</h1>
+        <p style="color:#888;">SATOSHI_CITY_V.2.5 SYSTEM BOOT...</p>
+        <br>
+        <p>"대중이 가는 길 끝에는 항상 벼랑뿐이었어.<br>살고 싶으면 이쪽으로 와."</p>
+        <button class="btn" onclick="game.start()">SYSTEM LOGIN</button>
+    </div>
+
+    <div id="scene-1" class="screen">
+        <h2 style="color:var(--neon-red)">SCENE 1: LIQUIDATION WALL</h2>
+        <p>비트코인의 운명을 예측하라. 틀리면 즉시 청산당한다.</p>
+        
+        <div class="chart-wrapper" id="tv_chart_container"></div>
+        
+        <div id="timer-box" style="font-size:2rem; margin-bottom:10px; color:#fff;">10.00</div>
+        
+        <div>
+            <button class="btn" onclick="game.bet('LONG')">LONG (BUY)</button>
+            <button class="btn btn-red" onclick="game.bet('SHORT')">SHORT (SELL)</button>
+        </div>
+    </div>
+
+    <div id="scene-2" class="screen">
+        <h2 style="color:var(--neon-gold)">SCENE 2: THE MINING POOL</h2>
+        <p>엘라: "오빠! 시간이 없어! 빨리 엔터를 연타해!"</p>
+        
+        <div class="hack-progress"><div id="hash-bar" class="hack-bar"></div></div>
+        <div style="font-size:1.5rem; color:var(--neon-gold)">HASH RATE: <span id="hash-val">0</span>%</div>
+        
+        <button class="btn" id="mine-btn" onclick="game.mine()" style="width:200px; height:200px; border-radius:50%; margin-top:20px;">
+            TAP FAST!
+        </button>
+    </div>
+
+    <div id="scene-3" class="screen">
+        <h1 class="glitch" style="font-size:4rem;">SYSTEM ERROR</h1>
+        <p class="glitch">FATAL EXCEPTION: PRICE == 0</p>
+        <p>오상무의 설계가 무너졌다. 시장이 붕괴한다.</p>
+    </div>
+
+    <div id="scene-end" class="screen">
+        <h1 style="color:#fff">SIMULATION RESET</h1>
+        <p>모든 것은 테스트였다.<br>데이터 기록 완료.</p>
+        <p style="color:var(--neon-cyan)">[ NEW VARIABLE ADDED: REVENGE ]</p>
+        <br>
+        <button class="btn" onclick="location.href='sequel_game.html'">NEXT CHAPTER (EPISODE 2)</button>
+    </div>
+
+    <script>
+        // 트레이딩뷰 위젯 로드 (안전하게 로드)
+        try {
+            new TradingView.widget({
+                "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
+                "style": "1", "locale": "kr", "toolbar_bg": "#000", "enable_publishing": false,
+                "hide_top_toolbar": true, "hide_legend": true, "container_id": "tv_chart_container"
+            });
+        } catch(e) { console.log("Chart loading skipped"); }
+
+        class MovieGame {
+            constructor() {
+                this.btc = 1.0;
+                this.hashRate = 0;
+                this.timer = null;
+                this.isGameOver = false;
+            }
+
+            start() {
+                this.switchScene('scene-1');
+                this.startTimer(10, () => {
+                    if(!this.isGameOver) {
+                        alert("시간 초과! 청산되었습니다.");
+                        location.reload();
+                    }
+                });
+            }
+
+            // SCENE 1: 베팅 로직
+            bet(type) {
+                if(this.isGameOver) return;
+                clearInterval(this.timer);
+                
+                // 50% 확률로 생존
+                const isWin = Math.random() > 0.3; 
+                
+                if(isWin) {
+                    this.btc += 0.5;
+                    this.updateUI();
+                    alert(`[시스템] ${type} 적중! 수익 발생. 다음 스테이지로 이동합니다.`);
+                    this.switchScene('scene-2');
+                    this.startMiningGame();
+                } else {
+                    this.btc = 0;
+                    this.updateUI();
+                    alert("청산당했습니다. 당신은 데이터 찌꺼기가 되었습니다.");
+                    location.reload();
+                }
+            }
+
+            // SCENE 2: 채굴 미니게임
+            startMiningGame() {
+                let timeLeft = 50; // 약 5초
+                const timeBar = setInterval(() => {
+                    timeLeft--;
+                    
+                    if(this.hashRate >= 100) {
+                        clearInterval(timeBar);
+                        this.switchScene('scene-3');
+                        setTimeout(() => this.switchScene('scene-end'), 3000); 
+                    } else if(timeLeft <= 0) {
+                        clearInterval(timeBar);
+                        alert("채굴 실패! 시스템 과부하로 사망.");
+                        location.reload();
+                    }
+                }, 100);
+            }
+
+            mine() {
+                this.hashRate += 8; // 클릭당 8% 증가 (난이도 조절)
+                if(this.hashRate > 100) this.hashRate = 100;
+                document.getElementById('hash-bar').style.width = this.hashRate + '%';
+                document.getElementById('hash-val').innerText = this.hashRate;
+            }
+
+            // 유틸리티
+            switchScene(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            updateUI() {
+                document.getElementById('user-btc').innerText = this.btc.toFixed(3);
+                if(this.btc <= 0) document.getElementById('user-btc').style.color = '#333';
+            }
+
+            startTimer(sec, callback) {
+                let t = sec;
+                const el = document.getElementById('timer-box');
+                this.timer = setInterval(() => {
+                    t -= 0.01;
+                    if(el) el.innerText = t.toFixed(2);
+                    if(t <= 0) {
+                        clearInterval(this.timer);
+                        callback();
+                    }
+                }, 10);
+            }
+        }
+
+        // 전역 변수로 선언하여 클릭 오류 방지
+        window.game = new MovieGame();
+    </script>
+</body>
+</html>
