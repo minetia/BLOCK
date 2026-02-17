@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAM: JOURNAL & ASSETS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #121212;
+            --panel: #1e1e1e;
+            --text: #e0e0e0;
+            --accent: #00e676; /* 네온 그린 */
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans KR', sans-serif;
+            padding: 20px;
+            line-height: 1.6; /* 기본 줄 간격 */
+        }
+
+        /* 1. 컨테이너: 화면 중앙 정렬 및 최대 폭 제한 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* 헤더 스타일 */
+        header {
+            background: #000;
+            padding: 20px;
+            border-bottom: 2px solid var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        h1 { font-family: 'Roboto Mono'; color: var(--accent); font-size: 1.5rem; letter-spacing: 2px; }
+
+        /* 2. 텍스트 박스 스타일 (가독성 핵심) */
+        .text-section {
+            padding: 30px; /* 내부 여백 */
+            border-bottom: 1px solid var(--border);
+        }
+        .text-content {
+            font-size: 1rem;
+            line-height: 1.8;       /* [핵심] 줄 간격을 넓게 (1.6 ~ 2.0 추천) */
+            letter-spacing: 0.03em; /* [핵심] 자간을 살짝 넓게 */
+            word-break: keep-all;   /* [핵심] 단어가 뚝 끊기지 않게 */
+            color: #ccc;
+            text-align: justify;    /* 양쪽 정렬 */
+        }
+        .title-label {
+            font-size: 0.8rem; color: var(--accent); font-weight: bold;
+            margin-bottom: 10px; display: block; text-transform: uppercase;
+        }
+
+        /* 3. 테이블 스타일 (폭 조절 핵심) */
+        .table-section {
+            padding: 20px;
+            width: 100%;
+            overflow-x: auto; /* 모바일에서 표가 넘치면 스크롤 */
+        }
+
+        table {
+            width: 100%;            /* [핵심] 테이블 폭을 부모 영역에 꽉 채움 */
+            border-collapse: collapse; /* 테두리 겹치기 */
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 15px;          /* [핵심] 셀 내부 여백을 넉넉하게 */
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            font-weight: bold;
+            white-space: nowrap; /* 제목 줄바꿈 방지 */
+        }
+
+        tr:hover { background-color: rgba(255, 255, 255, 0.05); } /* 마우스 올렸을 때 효과 */
+
+        /* 금액/숫자 우측 정렬 */
+        .num { text-align: right; font-weight: bold; color: #fff; }
+        .plus { color: #ff5252; }  /* 지출 */
+        .minus { color: #448aff; } /* 수입 */
+
+        /* 하단 버튼 */
+        .footer { padding: 20px; text-align: center; background: #151515; }
+        .btn {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 10px 30px; cursor: pointer; font-family: 'Roboto Mono';
+            transition: 0.2s;
+        }
+        .btn:hover { background: var(--accent); color: #000; }
+
+        /* 모바일 대응 */
+        @media (max-width: 600px) {
+            .text-section { padding: 20px; }
+            th, td { padding: 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>JAM.log</h1>
+            <span style="font-size:0.8rem; color:#666;">SECURE_CONNECTION</span>
+        </header>
+
+        <div class="text-section">
+            <span class="title-label">Mission Briefing</span>
+            <div class="text-content">
+                이 문서는 1급 기밀 작전 일지(JAM)입니다. 현재 시스템의 데이터 무결성을 검사하고 있으며, 
+                지난 전투에서 발생한 손익을 계산 중입니다. 
+                <br><br>
+                <strong>텍스트 간격(Text Spacing)</strong>을 조정하여 눈의 피로를 줄였으며, 
+                긴 문장도 편안하게 읽을 수 있도록 최적화되었습니다. 
+                모든 요원은 하단의 자산 테이블을 확인하고 다음 명령을 대기하십시오.
+            </div>
+        </div>
+
+        <div class="table-section">
+            <span class="title-label" style="margin-left:10px;">Asset History</span>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">DATE</th> <th style="width: 50%;">ITEM / EVENT</th>
+                        <th class="num" style="width: 30%;">AMOUNT ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2048-05-01</td>
+                        <td>Server Hack Reward</td>
+                        <td class="num minus">+ 5,000</td>
+                    </tr>
+                    <tr>
+                        <td>2048-05-03</td>
+                        <td>Drone Repair Kit</td>
+                        <td class="num plus">- 1,200</td>
+                    </tr>
+                    <tr>
+                        <td>2048-05-10</td>
+                        <td>Data Decryption</td>
+                        <td class="num minus">+ 8,500</td>
+                    </tr>
+                    <tr>
+                        <td>2048-05-12</td>
+                        <td>Hideout Rent</td>
+                        <td class="num plus">- 2,000</td>
+                    </tr>
+                    <tr style="background:rgba(0,230,118,0.1);">
+                        <td colspan="2" style="text-align:right; font-weight:bold;">TOTAL BALANCE</td>
+                        <td class="num" style="color:var(--accent); font-size:1.1rem;">$ 10,300</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <button class="btn" onclick="alert('데이터가 저장되었습니다.')">SAVE LOG</button>
+            <button class="btn" onclick="window.close()">CLOSE</button>
+        </div>
+    </div>
+
+</body>
+</html>

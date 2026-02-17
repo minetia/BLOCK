@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAM'S MAIN SCRIPT: THE BLOCK</title>
+    <style>
+        :root {
+            --jam-neon: #00ffcc;
+            --jam-gold: #d4af37;
+            --jam-bg: #050508;
+        }
+        body {
+            background-color: var(--jam-bg);
+            color: #eee;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* 메인 컨테이너: 모바일 가독성 최적화 */
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--jam-neon);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+        .writer-tag {
+            color: var(--jam-neon);
+            font-size: 0.9rem;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 15px 0;
+            text-shadow: 0 0 15px var(--jam-neon);
+        }
+        /* 스토리 타임라인 연결 */
+        .story-arc {
+            margin-bottom: 50px;
+            border-left: 2px solid #333;
+            padding-left: 20px;
+            position: relative;
+        }
+        .story-arc::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background: var(--jam-neon);
+            border-radius: 50%;
+        }
+        h2 { color: var(--jam-gold); font-size: 1.4rem; margin-bottom: 10px; }
+        .action { font-style: italic; color: #888; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+        
+        /* 대사 박스 */
+        .dialogue-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            word-break: keep-all; /* 세로 늘어짐 방지 핵심 */
+        }
+        .char { color: var(--jam-neon); font-weight: bold; margin-bottom: 8px; display: block; font-size: 0.9rem; }
+        .line { font-size: 1.1rem; line-height: 1.5; color: #fff; }
+        .jam-mention { color: var(--jam-gold); font-weight: bold; text-decoration: underline; }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.8rem;
+            color: #444;
+            padding-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <header>
+        <div class="writer-tag">MAIN SCRIPT ARCHITECT</div>
+        <h1>JAM: THE BLOCK</h1>
+    </header>
+
+    <div class="story-arc">
+        <h2>EP 01. 리퀴데이션 (청산)</h2>
+        <div class="action">
+            비트코인 차트가 무너지고 세상이 데이터로 분해된다. 한준은 오상무를 비웃으며 시스템의 허점을 찌른다.
+        </div>
+        <div class="dialogue-card">
+            <span class="char">한준</span>
+            <div class="line">"결국 다 가짜였군. 이 판을 짠 놈이 누구든, 난 여기서 나간다."</div>
+        </div>
+    </div>
+
+    <div class="story-arc">
+        <h2>EP 02. 하드포크 (각성)</h2>
+        <div class="action">
+            새로운 시뮬레이션 V.2.6. 추격자가 된 엘라를 마주한 한준이 '제네시스 노드'의 콘솔을 장악한다.
+        </div>
+        <div class="dialogue-card">
+            <span class="char">한준</span>
+            <div class="line">"당신이 보고 있는 거 다 알아. <span class="jam-mention">대본작가 잼</span>, 당신의 시나리오는 오늘부로 하드포크(Hard Fork)된다."</div>
+        </div>
+    </div>
+
+    <div class="story-arc">
+        <h2>FINAL. 넥스트 레벨 (현실)</h2>
+        <div class="action">
+            콘솔을 내리치자 가상 세계의 벽이 깨지고 진짜 현실의 공기가 밀려온다. 한준이 마침내 시스템 밖으로 첫발을 내디딘다.
+        </div>
+    </div>
+
+    <footer>
+        DESIGNED & SCRIPTED BY <strong>JAM</strong> | 2026
+    </footer>
+</div>
+
+</body>
+</html>

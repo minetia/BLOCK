@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BLOCK 2: REVENGE</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --bug-color: #00ff00; /* 해커 그린 */
+            --sys-color: #ff0055; /* 시스템 레드 */
+            --glitch-text: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        body { 
+            background-color: var(--bg); color: var(--glitch-text); 
+            font-family: 'Share Tech Mono', monospace;
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* 📺 깨진 화면 효과 (CRT Glitch) */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* 공통 스크린 */
+        .screen {
+            position: absolute; width: 100%; height: 100%; padding: 20px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; transition: 0.5s;
+        }
+        .screen.active { display: flex; animation: noise 0.2s steps(2); }
+
+        h1 { font-family: 'Black Han Sans', sans-serif; font-size: 3rem; color: var(--bug-color); text-shadow: 2px 2px var(--sys-color); margin-bottom: 20px; }
+        p { font-size: 1.2rem; line-height: 1.5; margin-bottom: 30px; max-width: 600px; }
+
+        /* 버튼 */
+        .btn {
+            background: #000; border: 2px solid var(--bug-color); color: var(--bug-color);
+            padding: 15px 30px; font-size: 1.2rem; cursor: pointer; font-family: 'Share Tech Mono';
+            box-shadow: 5px 5px 0px var(--bug-color); transition: 0.1s; margin: 10px;
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--bug-color); }
+        .btn-sys { border-color: var(--sys-color); color: var(--sys-color); box-shadow: 5px 5px 0px var(--sys-color); }
+        .btn-sys:active { box-shadow: 2px 2px 0px var(--sys-color); }
+
+        /* SCENE 1: 차트 해킹 */
+        .chart-overlay {
+            position: absolute; width: 100%; height: 300px; pointer-events: none;
+            display: flex; justify-content: center; align-items: center; font-size: 5rem;
+            color: rgba(255, 0, 0, 0.2); font-weight: bold; z-index: 10;
+        }
+        .hacking-bar { width: 100%; height: 5px; background: #333; margin-top: 10px; }
+        .hacking-progress { width: 0%; height: 100%; background: var(--bug-color); transition: width 0.1s; }
+
+        /* SCENE 2: 코드 배틀 */
+        .code-box {
+            width: 100%; max-width: 500px; height: 150px; background: #111; border: 1px solid #333;
+            color: var(--bug-color); padding: 10px; text-align: left; overflow: hidden; font-size: 0.9rem;
+            margin-bottom: 20px; white-space: pre-wrap;
+        }
+
+        /* 애니메이션 */
+        @keyframes noise { 0% { transform: translate(0,0) } 20% { transform: translate(-2px,2px) } 40% { transform: translate(-2px,-2px) } 60% { transform: translate(2px,2px) } 80% { transform: translate(2px,-2px) } 100% { transform: translate(0,0) } }
+        .shake { animation: noise 0.5s infinite; }
+    </style>
+</head>
+<body>
+
+    <div id="intro" class="screen active">
+        <h1>SYSTEM REBOOT...</h1>
+        <p style="color:#555">Version 2.6 Loaded.</p>
+        <p>기억이 돌아왔다.<br>나는 트레이더가 아니다.<br>나는 이 시스템의 <strong>'오류(BUG)'</strong>다.</p>
+        <button class="btn" onclick="game.start()">시스템 침투 (INJECT)</button>
+    </div>
+
+    <div id="scene-1" class="screen">
+        <h2 style="color:var(--sys-color)">WARNING: ABNORMAL ACTIVITY</h2>
+        <div style="position:relative; width:100%;">
+            <div id="chart-msg" class="chart-overlay"></div>
+            <div id="chart-container" style="height:300px;"></div>
+        </div>
+        <p>설계자가 가격을 폭락시키려 한다.<br><strong>[GLITCH]</strong> 스킬을 써서 차트를 멈춰라!</p>
+        
+        <div class="hacking-bar"><div id="glitch-bar" class="hacking-progress"></div></div>
+        
+        <button class="btn" id="glitch-btn" onclick="game.useGlitch()">GLITCH (CLICK!)</button>
+    </div>
+
+    <div id="scene-2" class="screen">
+        <h2 style="color:var(--bug-color)">FIREWALL DETECTED</h2>
+        <div id="terminal" class="code-box">Connecting to Core...<br>> Access Denied.<br>> Security Protocol V.9 Activated.</div>
+        <p>보안 코드가 변경되었다. 올바른 명령어를 선택하라.</p>
+        
+        <div id="quiz-area">
+            <button class="btn btn-sys" onclick="game.wrongAnswer()">SUDO DELETE USER</button>
+            <button class="btn" onclick="game.correctAnswer()">ROOT ACCESS_OVERRIDE</button>
+        </div>
+    </div>
+
+    <div id="scene-3" class="screen">
+        <h1 style="color:#fff; font-size:2rem;">THE ARCHITECT</h1>
+        <p>"끈질기군. 하지만 이 세계는 내 것이다.<br>삭제(Delete) 버튼 하나면 너는 끝이야."</p>
+        <br>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <button class="btn btn-sys" onclick="game.ending('bad')">삭제를 받아들인다 (GAME OVER)</button>
+            <button class="btn" onclick="game.ending('true')">시스템을 과부하 시킨다 (CRASH)</button>
+        </div>
+    </div>
+
+    <div id="end" class="screen">
+        <h1 class="shake">FATAL ERROR</h1>
+        <p>404 NOT FOUND<br>SYSTEM CRASHED</p>
+        <p style="color:var(--bug-color)">"이제... 우리 모두 자유야."</p>
+        <button class="btn" onclick="location.reload()">NEW WORLD (V.3.0)</button>
+    </div>
+
+    <script>
+        // 트레이딩뷰 위젯
+        let widget = new TradingView.widget({
+            "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
+            "style": "1", "locale": "kr", "toolbar_bg": "#000", "enable_publishing": false,
+            "hide_top_toolbar": true, "container_id": "chart-container"
+        });
+
+        class SequelGame {
+            constructor() {
+                this.glitchPower = 0;
+            }
+
+            next(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            start() { this.next('scene-1'); }
+
+            // Scene 1: 차트 멈추기 미니게임
+            useGlitch() {
+                this.glitchPower += 10;
+                document.getElementById('glitch-bar').style.width = this.glitchPower + '%';
+                
+                // 시각 효과
+                const msg = document.getElementById('chart-msg');
+                msg.innerText = "ERROR";
+                setTimeout(() => msg.innerText = "", 100);
+
+                if(this.glitchPower >= 100) {
+                    alert("차트 동결 성공! 관리자 권한 탈취.");
+                    this.next('scene-2');
+                }
+            }
+
+            // Scene 2: 퀴즈
+            wrongAnswer() {
+                const term = document.getElementById('terminal');
+                term.innerHTML += "\n> COMMAND FAILED. TRY AGAIN.";
+                term.scrollTop = term.scrollHeight;
+                document.body.classList.add('shake'); // 화면 흔들림
+                setTimeout(() => document.body.classList.remove('shake'), 500);
+            }
+
+            correctAnswer() {
+                const term = document.getElementById('terminal');
+                term.innerHTML += "\n> ACCESS GRANTED.\n> WELCOME, ADMIN.";
+                setTimeout(() => this.next('scene-3'), 1000);
+            }
+
+            // Scene 3: 엔딩 분기
+            ending(type) {
+                if(type === 'bad') {
+                    alert("당신은 삭제되었습니다.");
+                    location.reload();
+                } else {
+                    document.body.style.background = "white"; // 눈뽕 효과
+                    setTimeout(() => {
+                        document.body.style.background = "black";
+                        this.next('end');
+                    }, 500);
+                }
+            }
+        }
+
+        const game = new SequelGame();
+    </script>
+</body>
+</html>

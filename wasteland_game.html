@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BLOCK 4: REALITY (FIXED)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1814;
+            --term-green: #4af626;
+            --term-amber: #ffb000;
+            --alert: #ff3333;
+            --scanline: rgba(0,0,0,0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        body { 
+            background-color: var(--bg); color: var(--term-green); 
+            font-family: 'VT323', monospace; font-size: 1.5rem;
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* 📺 올드 터미널 효과 */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+        
+        @keyframes flicker { 0% { opacity: 0.9; } 50% { opacity: 1.0; } 100% { opacity: 0.9; } }
+        body { animation: flicker 0.2s infinite; }
+
+        /* 상태바 */
+        .hud {
+            padding: 15px; border-bottom: 2px solid var(--term-green);
+            display: flex; justify-content: space-between; font-size: 1.2rem;
+            background: #000; z-index: 100;
+        }
+        .energy-bar { color: var(--term-amber); }
+
+        /* 메인 스크린 */
+        .screen {
+            flex: 1; padding: 20px; overflow-y: auto; display: none; flex-direction: column;
+            align-items: center; justify-content: center; text-align: left; z-index: 10;
+        }
+        .screen.active { display: flex; }
+
+        .log-box {
+            width: 100%; max-width: 600px; text-align: left; margin-bottom: 20px;
+            color: #ccc; font-size: 1.2rem; line-height: 1.4;
+        }
+        .highlight { color: var(--term-green); font-weight: bold; }
+        .warning { color: var(--alert); }
+
+        /* 레트로 버튼 */
+        .btn {
+            background: #000; border: 2px solid var(--term-green); color: var(--term-green);
+            padding: 10px 20px; font-family: 'VT323'; font-size: 1.4rem; cursor: pointer;
+            margin: 5px; width: 100%; max-width: 300px; text-transform: uppercase;
+        }
+        .btn:hover { background: var(--term-green); color: #000; }
+
+        /* 키패드 */
+        .keypad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 10px; }
+        .key { border: 1px solid var(--term-amber); color: var(--term-amber); padding: 10px; text-align: center; cursor: pointer; width: 60px; }
+        .key:hover { background: var(--term-amber); color: #000; }
+        .key:active { transform: scale(0.95); }
+
+        /* 모래폭풍 효과 */
+        .sandstorm {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: transparent;
+            opacity: 0.1; pointer-events: none; z-index: 50;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sandstorm"></div>
+
+    <div class="hud">
+        <div>LOC: SECTOR_7</div>
+        <div class="energy-bar">BATTERY: <span id="bat-val">100</span>%</div>
+    </div>
+
+    <div id="scene-1" class="screen active">
+        <div class="log-box">
+            > SYSTEM REBOOT... OK.<br>
+            > DATE: 2048-??-??<br>
+            > STATUS: <span class="warning">CRITICAL</span><br><br>
+            당신은 캡슐에서 눈을 떴습니다. <br>
+            메타버스의 화려함은 없습니다. <br>
+            모래바람 소리와 기계음만 들립니다.
+        </div>
+        <button class="btn" onclick="game.move('scene-2')">주변을 수색한다 (-10%)</button>
+    </div>
+
+    <div id="scene-2" class="screen">
+        <div class="log-box">
+            구석에서 백골이 된 시체를 발견했습니다.<br>
+            손에는 낡은 <span class="highlight">[콜드 월렛]</span>이 쥐어져 있습니다.<br>
+            저항군의 좌표가 들어있을지도 모릅니다.
+        </div>
+        <button class="btn" onclick="game.startHack()">비밀번호 해독 시도 (-20%)</button>
+        <button class="btn" onclick="game.move('scene-3')">무시하고 이동한다 (-10%)</button>
+    </div>
+
+    <div id="scene-hack" class="screen">
+        <div class="log-box">
+            > PROTOCOL: DECRYPT<br>
+            > PASSWORD: 3 DIGITS (000-999)<br>
+            > HINT: <span id="hint-msg" class="highlight">입력 대기 중...</span>
+        </div>
+        <div style="font-size:2rem; margin:10px; color:var(--term-amber);" id="input-display">_ _ _</div>
+        <div class="keypad">
+            <div class="key" onclick="game.inputKey(1)">1</div><div class="key" onclick="game.inputKey(2)">2</div><div class="key" onclick="game.inputKey(3)">3</div>
+            <div class="key" onclick="game.inputKey(4)">4</div><div class="key" onclick="game.inputKey(5)">5</div><div class="key" onclick="game.inputKey(6)">6</div>
+            <div class="key" onclick="game.inputKey(7)">7</div><div class="key" onclick="game.inputKey(8)">8</div><div class="key" onclick="game.inputKey(9)">9</div>
+            <div class="key" onclick="game.clearKey()">C</div><div class="key" onclick="game.inputKey(0)">0</div><div class="key" onclick="game.checkKey()">ENT</div>
+        </div>
+    </div>
+
+    <div id="scene-3" class="screen">
+        <div class="log-box">
+            <span class="warning">WARNING: DRONE DETECTED</span><br><br>
+            오상무의 감시 드론이 순찰 중입니다.<br>
+            배터리가 얼마 남지 않았습니다.
+        </div>
+        <button class="btn" onclick="game.ending('bad')">싸운다 (승률 10%)</button>
+        <button class="btn" onclick="game.ending('good')">죽은 척한다 (에너지 절약)</button>
+    </div>
+
+    <div id="scene-end" class="screen">
+        <h1 id="end-title" style="font-size:3rem; margin-bottom:20px;"></h1>
+        <div id="end-desc" class="log-box" style="text-align:center;"></div>
+        <button class="btn" onclick="location.reload()">RESTART SIMULATION</button>
+    </div>
+
+    <script>
+        class WastelandGame {
+            constructor() {
+                this.battery = 100;
+                this.passcode = Math.floor(Math.random() * 999);
+                this.currentInput = "";
+                this.tryCount = 5;
+            }
+
+            // 장면 이동 (배터리 소모)
+            move(id) {
+                this.battery -= 10;
+                this.updateBat();
+                
+                if(this.battery <= 0) {
+                    this.ending('dead');
+                } else {
+                    this.show(id);
+                }
+            }
+
+            show(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            updateBat() {
+                const el = document.getElementById('bat-val');
+                if(el) {
+                    el.innerText = this.battery;
+                    if(this.battery < 30) el.style.color = 'var(--alert)';
+                }
+            }
+
+            // 해킹 시작
+            startHack() {
+                this.battery -= 20; 
+                this.updateBat();
+                
+                if(this.battery <= 0) {
+                    this.ending('dead');
+                } else {
+                    this.show('scene-hack');
+                }
+            }
+
+            // 키패드 입력
+            inputKey(num) {
+                if(this.currentInput.length < 3) this.currentInput += num.toString();
+                this.updateDisplay();
+            }
+            clearKey() { this.currentInput = ""; this.updateDisplay(); }
+            updateDisplay() { document.getElementById('input-display').innerText = this.currentInput.padEnd(3, '_'); }
+
+            // 정답 확인
+            checkKey() {
+                if(this.currentInput.length !== 3) return;
+                
+                const val = parseInt(this.currentInput);
+                const hint = document.getElementById('hint-msg');
+                
+                if(val === this.passcode) {
+                    hint.innerText = "ACCESS GRANTED.";
+                    hint.style.color = "var(--term-green)";
+                    setTimeout(() => {
+                        alert("좌표 획득: 저항군 기지 (SECTOR 9)");
+                        this.move('scene-3');
+                    }, 500);
+                } else {
+                    this.tryCount--;
+                    if(this.tryCount <= 0) {
+                        alert("보안 시스템 작동! 단말기가 폭발했습니다.");
+                        this.battery -= 30; // 폭발 데미지
+                        this.move('scene-3');
+                    } else {
+                        if(val < this.passcode) hint.innerText = `UP (기회 ${this.tryCount}번)`;
+                        else hint.innerText = `DOWN (기회 ${this.tryCount}번)`;
+                        hint.style.color = "var(--alert)";
+                        this.currentInput = "";
+                        this.updateDisplay();
+                    }
+                }
+            }
+
+            // 엔딩 처리
+            ending(type) {
+                this.show('scene-end');
+                const title = document.getElementById('end-title');
+                const desc = document.getElementById('end-desc');
+
+                if(type === 'dead') {
+                    title.innerText = "ENERGY DEPLETED";
+                    title.style.color = "var(--alert)";
+                    desc.innerText = "배터리가 방전되었습니다.\n당신은 사막의 일부가 되었습니다.";
+                } else if(type === 'bad') {
+                    title.innerText = "ELIMINATED";
+                    title.style.color = "var(--alert)";
+                    desc.innerText = "드론의 레이저에 관통당했습니다.\n인간의 몸으로는 기계를 이길 수 없습니다.";
+                } else {
+                    title.innerText = "SURVIVOR";
+                    title.style.color = "var(--term-green)";
+                    desc.innerHTML = "드론이 당신을 인식하지 못하고 지나갑니다.<br>저항군의 신호가 잡힙니다.<br><br><strong>[TO BE CONTINUED IN FINAL BATTLE]</strong>";
+                }
+            }
+        }
+
+        // [중요] 게임 인스턴스를 전역 변수로 선언 (버그 수정)
+        window.game = new WastelandGame();
+    </script>
+</body>
+</html>

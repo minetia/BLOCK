@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BLOCK: FINAL CUT</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-red: #ff003c;
+            --neon-cyan: #00f3ff;
+            --neon-gold: #fcee0a;
+            --text-main: #e0e0e0;
+            --white-room-bg: #f0f0f0;
+            --white-room-text: #111;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg); color: var(--text-main); 
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh; overflow: hidden; 
+            display: flex; flex-direction: column;
+            text-transform: uppercase;
+            transition: background-color 1s ease, color 0.5s ease;
+        }
+
+        /* CRT 노이즈 효과 */
+        body::after {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        .screen {
+            position: absolute; width: 100%; height: 100%; padding: 20px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; opacity: 0; transition: opacity 1s;
+        }
+        .screen.active { display: flex; opacity: 1; animation: fadeIn 1s; }
+
+        h1 { font-size: 2.5rem; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); margin-bottom: 20px; }
+        p { font-family: 'Noto Serif KR', serif; font-size: 1.1rem; line-height: 1.6; max-width: 650px; margin-bottom: 30px; text-transform: none; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        
+        /* 화이트 룸 모드 (Scene 4) */
+        body.white-mode { background-color: var(--white-room-bg); color: var(--white-room-text); }
+        body.white-mode h1, body.white-mode h2 { color: #000; text-shadow: none; }
+        body.white-mode .btn { border-color: #000; color: #000; box-shadow: none; }
+        body.white-mode .btn:hover { background: #000; color: #fff; }
+
+        /* 버튼 스타일 */
+        .btn {
+            background: transparent; border: 2px solid var(--neon-cyan); color: var(--neon-cyan);
+            padding: 15px 30px; font-size: 1rem; font-family: 'Orbitron'; font-weight: bold;
+            cursor: pointer; transition: 0.2s; margin: 10px; text-transform: uppercase;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+        .btn:hover { background: var(--neon-cyan); color: #000; transform: scale(1.05); }
+        .btn-red { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
+        .btn-red:hover { background: var(--neon-red); color: #000; }
+
+        /* SCENE 2: 해킹 */
+        .hack-progress { width: 100%; max-width: 400px; height: 30px; border: 2px solid #333; padding: 2px; margin: 20px 0; }
+        .hack-bar { width: 0%; height: 100%; background: var(--neon-gold); transition: width 0.1s; }
+
+        /* 타이핑 커서 */
+        .typing::after { content: '_'; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 글리치 효과 */
+        .glitch { animation: glitch 0.3s infinite; color: var(--neon-red) !important; font-weight: 900; }
+        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-2px, 2px) } 40% { transform: translate(-2px, -2px) } 60% { transform: translate(2px, 2px) } 80% { transform: translate(2px, -2px) } 100% { transform: translate(0) } }
+    </style>
+</head>
+<body>
+
+    <div id="scene-intro" class="screen active">
+        <h1 class="typing">THE BLOCK</h1>
+        <p style="color:#888;">EPISODE 1: SATOSHI CITY</p>
+        <p>"살고 싶으면 이쪽으로 와.<br>대중이 가는 길 끝에는 항상 벼랑뿐이었어."</p>
+        <button class="btn" onclick="game.next('scene-1')">ENTER SIMULATION</button>
+    </div>
+
+    <div id="scene-1" class="screen">
+        <h2 style="color:var(--neon-red)">SCENE 1: THE WALL</h2>
+        <div id="chart-container" style="width:100%; height:250px; margin-bottom:20px;"></div>
+        <p>가격이 요동친다. 5초 안에 생존 포지션을 선택하라.</p>
+        <div>
+            <button class="btn" onclick="game.bet(true)">LONG (BUY)</button>
+            <button class="btn btn-red" onclick="game.bet(false)">SHORT (SELL)</button>
+        </div>
+    </div>
+
+    <div id="scene-2" class="screen">
+        <h2 style="color:var(--neon-gold)">SCENE 2: MINING POOL</h2>
+        <p>엘라: "보안 시스템이 작동했어! 해시레이트를 과부하 시켜야 문이 열려!"</p>
+        <div class="hack-progress"><div id="hash-bar" class="hack-bar"></div></div>
+        <button class="btn" onclick="game.mine()">TAP FAST!</button>
+        <div id="hash-text" style="margin-top:10px; color:var(--neon-gold)">0%</div>
+    </div>
+
+    <div id="scene-3" class="screen">
+        <h1 class="glitch" style="font-size:3rem;">BLACK SWAN</h1>
+        <p class="glitch">FATAL ERROR: PRICE INDEX 0.00</p>
+        <p>모든 것이 붕괴된다. 하지만 그 틈새에 '고래의 방'으로 가는 백도어가 있다.</p>
+        <button class="btn btn-red" onclick="game.enterWhiteRoom()">ENTER BACKDOOR</button>
+    </div>
+
+    <div id="scene-4" class="screen">
+        <h1>THE WHITE ROOM</h1>
+        <p style="color:#333; font-weight:bold;">오상무(The Whale):<br>"자네 실력은 인상적이군. 내 밑으로 들어와라.<br>그럼 이 붕괴 속에서 너만은 구해주지."</p>
+        <br>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="btn" onclick="game.ending('bad')">제안을 수락한다 (키를 넘긴다)</button>
+            <button class="btn btn-red" onclick="game.ending('true')">거절하고 지갑을 해킹한다 (하드포크)</button>
+        </div>
+    </div>
+
+    <div id="scene-end" class="screen">
+        <h1 id="end-title">SIMULATION RESET</h1>
+        <p id="end-desc">시스템 재부팅 중...</p>
+        <br>
+        <button class="btn" onclick="location.reload()">REPLAY V.2.6</button>
+    </div>
+
+    <script>
+        // 트레이딩뷰 로드
+        new TradingView.widget({
+            "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
+            "style": "1", "locale": "kr", "toolbar_bg": "#000", "enable_publishing": false,
+            "hide_top_toolbar": true, "hide_legend": true, "container_id": "chart-container"
+        });
+
+        class InteractiveMovie {
+            constructor() {
+                this.hash = 0;
+            }
+
+            next(id) {
+                document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            // Scene 1: 도박
+            bet(choice) {
+                const win = Math.random() > 0.3; // 70% 생존
+                if(win) {
+                    alert("생존 확인. 다음 구역으로 이동합니다.");
+                    this.next('scene-2');
+                } else {
+                    alert("청산되었습니다. (BAD ENDING)");
+                    location.reload();
+                }
+            }
+
+            // Scene 2: 채굴
+            mine() {
+                this.hash += 8;
+                document.getElementById('hash-bar').style.width = this.hash + '%';
+                document.getElementById('hash-text').innerText = this.hash + '%';
+                
+                if(this.hash >= 100) {
+                    this.hash = 0;
+                    this.next('scene-3');
+                }
+            }
+
+            // Scene 3 -> 4 전환 (색상 반전 효과)
+            enterWhiteRoom() {
+                document.body.classList.add('white-mode'); // 배경 흰색으로 변경
+                this.next('scene-4');
+            }
+
+            // Scene 4: 선택과 엔딩
+            ending(type) {
+                document.body.classList.remove('white-mode'); // 다시 어둡게
+                this.next('scene-end');
+                
+                const title = document.getElementById('end-title');
+                const desc = document.getElementById('end-desc');
+
+                if(type === 'bad') {
+                    title.style.color = "var(--neon-red)";
+                    title.innerText = "GAME OVER";
+                    desc.innerText = "당신은 시스템의 부품이 되었습니다.\n오상무의 자산은 더욱 불어났습니다.";
+                } else {
+                    title.style.color = "var(--neon-cyan)";
+                    title.innerText = "GENESIS BLOCK";
+                    desc.innerHTML = "당신은 고래의 지갑 주소를 전 세계에 공개했습니다.<br>시스템이 붕괴하고, 새로운 체인이 시작됩니다.<br><br>[업적 달성: 진정한 탈중앙화]";
+                }
+            }
+        }
+
+        const game = new InteractiveMovie();
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BLOCK: NEW GOD</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+KR:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --gold: #d4af37;
+            --red: #ff3b30;
+            --green: #4cd964;
+            --glass: rgba(20, 20, 30, 0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        body { 
+            background: var(--bg); color: #fff; 
+            font-family: 'Noto Sans KR', sans-serif;
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        /* 신의 시점 배경 (지구) */
+        .god-view {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            background: radial-gradient(circle at center, #1a2a40 0%, #000 100%);
+            z-index: -1; display: flex; align-items: center; justify-content: center;
+        }
+        .earth {
+            width: 300px; height: 300px; border-radius: 50%;
+            background: conic-gradient(#1e3c72, #2a5298, #1e3c72);
+            box-shadow: 0 0 100px rgba(42, 82, 152, 0.5);
+            opacity: 0.5; animation: rotateEarth 20s linear infinite;
+        }
+
+        /* UI 패널 */
+        .control-panel {
+            width: 90%; max-width: 500px; background: var(--glass);
+            border: 1px solid var(--gold); border-radius: 10px;
+            padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px); display: none; flex-direction: column; gap: 20px;
+            animation: fadeIn 2s;
+        }
+        .control-panel.active { display: flex; }
+
+        h1 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 2rem; margin-bottom: 5px; text-shadow: 0 0 10px var(--gold); }
+        .subtitle { font-size: 0.8rem; color: #888; letter-spacing: 3px; margin-bottom: 20px; }
+
+        /* 시장 조작 버튼 */
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+        .god-btn {
+            flex: 1; padding: 20px; font-size: 1.2rem; font-weight: bold; border: none;
+            cursor: pointer; transition: 0.2s; border-radius: 5px; color: #fff;
+            font-family: 'Cinzel'; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .btn-pump { background: linear-gradient(180deg, #4cd964, #2c8c3e); border-bottom: 4px solid #1e662a; }
+        .btn-dump { background: linear-gradient(180deg, #ff3b30, #c41c12); border-bottom: 4px solid #8a0f08; }
+        .god-btn:active { transform: translateY(4px); border-bottom-width: 0; }
+
+        /* 개미들의 비명 (채팅창) */
+        .ant-chat {
+            height: 150px; background: rgba(0,0,0,0.5); border: 1px solid #333;
+            overflow-y: hidden; text-align: left; padding: 10px; font-size: 0.9rem;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .msg { margin-bottom: 5px; opacity: 0.8; }
+        .msg.cry { color: var(--red); }
+        .msg.cheer { color: var(--green); }
+        .msg.new { animation: slideUp 0.3s; }
+
+        /* 가격 표시기 */
+        .price-display { font-size: 3rem; font-weight: bold; font-family: 'Cinzel'; transition: color 0.3s; }
+        
+        /* 새로운 도전자 경고창 */
+        .challenger-alert {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .alert-box { border: 2px solid var(--red); padding: 40px; text-align: center; animation: pulse 1s infinite; }
+
+        @keyframes rotateEarth { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 10px var(--red); } 50% { box-shadow: 0 0 30px var(--red); } 100% { box-shadow: 0 0 10px var(--red); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="god-view"><div class="earth"></div></div>
+
+    <div id="intro" class="control-panel active" style="border-color:#fff;">
+        <h1 style="color:#fff; text-shadow:none;">SUCCESSION</h1>
+        <p>오상무가 제거되었습니다.<br>이제 <span style="color:var(--gold); font-weight:bold;">당신</span>이 이 세계의 설계자입니다.</p>
+        <button class="god-btn" style="background:#fff; color:#000; margin-top:20px;" onclick="game.start()">의자에 앉기</button>
+    </div>
+
+    <div id="main" class="control-panel">
+        <h1>THE THRONE</h1>
+        <div class="subtitle">MASTER CONTROL SYSTEM</div>
+
+        <div class="price-display" id="price">BTC $98,000</div>
+        
+        <div class="ant-chat" id="chat-box">
+            <div class="msg" style="color:#888;">SYSTEM: 관리자 권한 승인됨.</div>
+        </div>
+
+        <div class="btn-group">
+            <button class="god-btn btn-pump" onclick="game.manipulate('PUMP')">PUMP (폭등)</button>
+            <button class="god-btn btn-dump" onclick="game.manipulate('DUMP')">DUMP (폭락)</button>
+        </div>
+        
+        <p style="font-size:0.8rem; color:#666; margin-top:10px;">클릭 한 번에 수천 명이 파산합니다.</p>
+    </div>
+
+    <div id="ending" class="challenger-alert">
+        <div class="alert-box">
+            <h1 style="color:var(--red)">WARNING</h1>
+            <p style="font-size:1.5rem; margin:20px 0;">NEW PLAYER DETECTED</p>
+            <p>ID: <span style="color:var(--gold)">SAVIOR_99</span></p>
+            <br>
+            <p style="color:#888;">"과거의 당신과 똑같은 눈을 한 녀석이군..."</p>
+            <br>
+            <button class="god-btn" style="background:var(--red); border:none;" onclick="location.reload()">도전 받아들이기 (LOOP)</button>
+        </div>
+    </div>
+
+    <script>
+        class GodMode {
+            constructor() {
+                this.price = 98000;
+                this.clickCount = 0;
+                this.msgs = {
+                    pump: ["가즈아!!", "역시 비트신!", "영차 영차!", "대출 풀매수 간다!", "고맙습니다 형님!"],
+                    dump: ["아악! 내 돈!", "한강 물 차갑냐?", "살려주세요...", "청산당했습니다.", "이건 사기야!"]
+                };
+            }
+
+            next(id) {
+                document.querySelectorAll('.control-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            start() { this.next('main'); }
+
+            manipulate(type) {
+                this.clickCount++;
+                const chatBox = document.getElementById('chat-box');
+                const priceDisplay = document.getElementById('price');
+
+                // 가격 변동
+                let change = Math.floor(Math.random() * 5000) + 1000;
+                if(type ===
