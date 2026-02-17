@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BLOCK 2: REVENGE</title>
+    <title>THE BLOCK 2: REVENGE (FIXED)</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Han+Sans&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
             --glitch-text: #fff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background-color: var(--bg); color: var(--glitch-text); 
@@ -23,7 +23,7 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* 📺 깨진 화면 효과 (CRT Glitch) */
+        /* 📺 깨진 화면 효과 */
         body::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -34,7 +34,7 @@
         .screen {
             position: absolute; width: 100%; height: 100%; padding: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; transition: 0.5s;
+            text-align: center; transition: 0.5s; z-index: 10;
         }
         .screen.active { display: flex; animation: noise 0.2s steps(2); }
 
@@ -55,15 +55,15 @@
         .chart-overlay {
             position: absolute; width: 100%; height: 300px; pointer-events: none;
             display: flex; justify-content: center; align-items: center; font-size: 5rem;
-            color: rgba(255, 0, 0, 0.2); font-weight: bold; z-index: 10;
+            color: rgba(255, 0, 0, 0.5); font-weight: bold; z-index: 20;
         }
-        .hacking-bar { width: 100%; height: 5px; background: #333; margin-top: 10px; }
+        .hacking-bar { width: 100%; height: 10px; background: #333; margin-top: 10px; }
         .hacking-progress { width: 0%; height: 100%; background: var(--bug-color); transition: width 0.1s; }
 
         /* SCENE 2: 코드 배틀 */
         .code-box {
             width: 100%; max-width: 500px; height: 150px; background: #111; border: 1px solid #333;
-            color: var(--bug-color); padding: 10px; text-align: left; overflow: hidden; font-size: 0.9rem;
+            color: var(--bug-color); padding: 10px; text-align: left; overflow-y: auto; font-size: 0.9rem;
             margin-bottom: 20px; white-space: pre-wrap;
         }
 
@@ -87,11 +87,11 @@
             <div id="chart-msg" class="chart-overlay"></div>
             <div id="chart-container" style="height:300px;"></div>
         </div>
-        <p>설계자가 가격을 폭락시키려 한다.<br><strong>[GLITCH]</strong> 스킬을 써서 차트를 멈춰라!</p>
+        <p>설계자가 가격을 폭락시키려 한다.<br><strong>[GLITCH]</strong> 버튼을 연타해서 차트를 멈춰라!</p>
         
         <div class="hacking-bar"><div id="glitch-bar" class="hacking-progress"></div></div>
         
-        <button class="btn" id="glitch-btn" onclick="game.useGlitch()">GLITCH (CLICK!)</button>
+        <button class="btn" id="glitch-btn" onclick="game.useGlitch()">GLITCH (TAP FAST!)</button>
     </div>
 
     <div id="scene-2" class="screen">
@@ -119,16 +119,18 @@
         <h1 class="shake">FATAL ERROR</h1>
         <p>404 NOT FOUND<br>SYSTEM CRASHED</p>
         <p style="color:var(--bug-color)">"이제... 우리 모두 자유야."</p>
-        <button class="btn" onclick="location.reload()">NEW WORLD (V.3.0)</button>
+        <button class="btn" onclick="location.href='metaverse_game.html'">ENTER NEW WORLD (V.3.0)</button>
     </div>
 
     <script>
-        // 트레이딩뷰 위젯
-        let widget = new TradingView.widget({
-            "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
-            "style": "1", "locale": "kr", "toolbar_bg": "#000", "enable_publishing": false,
-            "hide_top_toolbar": true, "container_id": "chart-container"
-        });
+        // 트레이딩뷰 위젯 로드 시도
+        try {
+            new TradingView.widget({
+                "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark",
+                "style": "1", "locale": "kr", "toolbar_bg": "#000", "enable_publishing": false,
+                "hide_top_toolbar": true, "hide_legend": true, "container_id": "chart-container"
+            });
+        } catch(e) {}
 
         class SequelGame {
             constructor() {
@@ -144,13 +146,16 @@
 
             // Scene 1: 차트 멈추기 미니게임
             useGlitch() {
-                this.glitchPower += 10;
+                this.glitchPower += 8; // 클릭당 증가량
+                if(this.glitchPower > 100) this.glitchPower = 100;
+                
                 document.getElementById('glitch-bar').style.width = this.glitchPower + '%';
                 
                 // 시각 효과
                 const msg = document.getElementById('chart-msg');
                 msg.innerText = "ERROR";
-                setTimeout(() => msg.innerText = "", 100);
+                msg.style.opacity = 1;
+                setTimeout(() => msg.style.opacity = 0, 100);
 
                 if(this.glitchPower >= 100) {
                     alert("차트 동결 성공! 관리자 권한 탈취.");
@@ -161,15 +166,20 @@
             // Scene 2: 퀴즈
             wrongAnswer() {
                 const term = document.getElementById('terminal');
-                term.innerHTML += "\n> COMMAND FAILED. TRY AGAIN.";
+                term.innerHTML += "\n> COMMAND FAILED. SYSTEM LOCKED.";
                 term.scrollTop = term.scrollHeight;
-                document.body.classList.add('shake'); // 화면 흔들림
-                setTimeout(() => document.body.classList.remove('shake'), 500);
+                document.body.classList.add('shake');
+                setTimeout(() => {
+                    document.body.classList.remove('shake');
+                    alert("보안 시스템에 발각되었습니다. (재시작)");
+                    location.reload();
+                }, 500);
             }
 
             correctAnswer() {
                 const term = document.getElementById('terminal');
                 term.innerHTML += "\n> ACCESS GRANTED.\n> WELCOME, ADMIN.";
+                term.scrollTop = term.scrollHeight;
                 setTimeout(() => this.next('scene-3'), 1000);
             }
 
@@ -179,16 +189,21 @@
                     alert("당신은 삭제되었습니다.");
                     location.reload();
                 } else {
-                    document.body.style.background = "white"; // 눈뽕 효과
+                    // 화이트 아웃 효과
+                    document.body.style.background = "white"; 
+                    document.querySelectorAll('*').forEach(el => el.style.opacity = 0);
+                    
                     setTimeout(() => {
                         document.body.style.background = "black";
+                        document.querySelectorAll('*').forEach(el => el.style.opacity = 1);
                         this.next('end');
-                    }, 500);
+                    }, 1000);
                 }
             }
         }
 
-        const game = new SequelGame();
+        // 전역 변수로 선언
+        window.game = new SequelGame();
     </script>
 </body>
 </html>
