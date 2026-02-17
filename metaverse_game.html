@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BLOCK 3: METAVERSE</title>
+    <title>THE BLOCK 3: METAVERSE (FIXED)</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
             --btn-color: #a18cd1;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: var(--bg); color: #555; 
@@ -30,7 +30,7 @@
         .screen {
             position: absolute; width: 100%; height: 100%; padding: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; backdrop-filter: blur(10px);
+            text-align: center; backdrop-filter: blur(10px); z-index: 10;
         }
         .screen.active { display: flex; animation: float 3s ease-in-out infinite; }
 
@@ -43,7 +43,7 @@
         .card {
             background: var(--ui-glass); padding: 30px; border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 100%; max-width: 500px;
+            width: 100%; max-width: 500px; position: relative;
         }
 
         /* 둥글둥글한 버튼 */
@@ -51,22 +51,25 @@
             background: #fff; border: none; color: var(--btn-color);
             padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; font-weight: bold;
             cursor: pointer; box-shadow: 0 5px 15px rgba(161, 140, 209, 0.4);
-            transition: 0.3s; margin: 10px;
+            transition: 0.2s; margin: 10px;
         }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 140, 209, 0.6); }
+        .btn:active { transform: scale(0.95); }
 
         /* 도망가는 버튼 */
-        #logout-btn { position: relative; transition: 0.1s; background: #ff6b6b; color: white; }
+        #logout-btn { 
+            position: relative; transition: transform 0.2s ease-out; 
+            background: #ff6b6b; color: white; z-index: 20;
+        }
 
-        /* Scene 1: 강제 수익 */
-        .money-rain { position: absolute; font-size: 2rem; color: #00c853; font-weight: bold; animation: fall 1s forwards; pointer-events: none; }
+        /* Scene 1: 강제 수익 효과 */
+        .money-rain { position: absolute; font-size: 2rem; color: #00c853; font-weight: bold; animation: fall 1s forwards; pointer-events: none; z-index: 5; }
         @keyframes fall { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-50px); opacity: 0; } }
 
         /* Scene 3: 현실 깨짐 효과 */
         .crack {
-            position: absolute; width: 100%; height: 100%; background: black; opacity: 0; pointer-events: none; z-index: 99;
+            position: absolute; width: 100%; height: 100%; background: #000; opacity: 0; pointer-events: none; z-index: 99; transition: opacity 2s;
         }
-        .crack.broken { opacity: 0.8; transition: opacity 2s; }
+        .crack.broken { opacity: 1; }
     </style>
 </head>
 <body>
@@ -89,16 +92,22 @@
                 <button class="btn" onclick="game.trade()">BUY (롱)</button>
                 <button class="btn" onclick="game.trade()">SELL (숏)</button>
             </div>
+            <div id="escape-box" style="margin-top:30px; opacity:0; pointer-events:none; transition:opacity 1s;">
+                <button class="btn" style="background:#eee; color:#555; font-size:0.9rem;" onclick="game.next('scene-2')">
+                    <i class="fas fa-exclamation-circle"></i> 무언가 잘못되었다...
+                </button>
+            </div>
         </div>
-        <button class="btn" id="escape-trigger" style="margin-top:50px; opacity:0; pointer-events:none;" onclick="game.next('scene-2')">무언가 잘못되었다...</button>
+        <p style="font-size:0.8rem; margin-top:20px; color:#fff;">(힌트: 매매를 5번 이상 반복하세요)</p>
     </div>
 
     <div id="scene-2" class="screen">
         <h1 style="color:#ff6b6b">LOGOUT ERROR</h1>
         <div class="card">
-            <p>"왜 나가려 하시나요?<br>여긴 춥지도, 배고프지도 않은데..."</p>
-            <button id="logout-btn" class="btn" onmouseover="game.runButton()">LOGOUT (탈출)</button>
+            <p id="msg-2">"왜 나가려 하시나요?<br>여긴 춥지도, 배고프지도 않은데..."</p>
+            <button id="logout-btn" class="btn" onmouseover="game.chaseBtn()" onclick="game.chaseBtn()">LOGOUT (탈출)</button>
         </div>
+        <p style="font-size:0.8rem; margin-top:20px; color:#ff6b6b;">(버튼을 계속 쫓아가세요!)</p>
     </div>
 
     <div id="scene-3" class="screen">
@@ -107,20 +116,23 @@
             <p>이곳은 가짜다. 당신의 육체는 채굴장에 갇혀 있다.<br>환상을 깨부수겠습니까?</p>
             <button class="btn" style="background:#000; color:#fff;" onclick="game.wakeUp()">WAKE UP (현실로)</button>
         </div>
-        <div id="screen-crack" class="crack"></div>
     </div>
 
-    <div id="end" class="screen" style="background:#000;">
+    <div id="screen-crack" class="crack"></div>
+
+    <div id="end" class="screen" style="background:#000; z-index:100;">
         <h1 style="color:#fff; text-shadow:none; font-family:'Courier New';">WELCOME TO REALITY</h1>
         <p style="color:#0f0;">SYSTEM: DISCONNECTED.<br>LOCATION: UNKNOWN DESERT.</p>
-        <button class="btn" style="border:1px solid #0f0; background:#000; color:#0f0;" onclick="location.reload()">TO BE CONTINUED...</button>
+        <button class="btn" style="border:1px solid #0f0; background:#000; color:#0f0;" onclick="location.href='wasteland_game.html'">NEXT CHAPTER (EPISODE 4)</button>
     </div>
 
     <script>
         class MetaverseGame {
             constructor() {
                 this.balance = 10000;
-                this.clickCount = 0;
+                this.tradeCount = 0; 
+                this.runCount = 0;   
+                this.isCaught = false;
             }
 
             next(id) {
@@ -130,14 +142,14 @@
 
             start() { this.next('scene-1'); }
 
-            // Scene 1: 강제 수익 로직
+            // Scene 1: 매매 반복
             trade() {
-                this.clickCount++;
+                this.tradeCount++;
                 const gain = Math.floor(Math.random() * 500) + 100;
                 this.balance += gain;
                 document.getElementById('money').innerText = `$${this.balance.toLocaleString()}`;
                 
-                // 돈 떨어지는 효과
+                // 돈 효과
                 const el = document.createElement('div');
                 el.innerText = `+$${gain}`;
                 el.className = 'money-rain';
@@ -146,41 +158,54 @@
                 document.getElementById('scene-1').appendChild(el);
                 setTimeout(() => el.remove(), 1000);
 
-                // 10번 누르면 이상함을 감지
-                if(this.clickCount > 5) {
-                    const trigger = document.getElementById('escape-trigger');
-                    trigger.style.opacity = 1;
-                    trigger.style.pointerEvents = 'auto';
+                // 5번 누르면 탈출 버튼 등장
+                if(this.tradeCount >= 5) {
+                    const box = document.getElementById('escape-box');
+                    box.style.opacity = 1;
+                    box.style.pointerEvents = 'auto';
                 }
             }
 
-            // Scene 2: 도망가는 버튼
-            runButton() {
+            // Scene 2: 도망가는 버튼 (수정됨: 3번만 피하면 잡힘)
+            chaseBtn() {
+                if(this.isCaught) return; // 이미 잡혔으면 무시
+
+                this.runCount++;
                 const btn = document.getElementById('logout-btn');
-                const x = (Math.random() - 0.5) * 300;
-                const y = (Math.random() - 0.5) * 300;
-                btn.style.transform = `translate(${x}px, ${y}px)`;
-                
-                // 5번 피하면 잡힘 (스토리 진행)
-                this.clickCount++;
-                if(this.clickCount > 15) {
-                    btn.style.transform = 'none';
-                    btn.innerText = "SYSTEM CRITICAL";
+                const msg = document.getElementById('msg-2');
+
+                // 3번 이상 쫓아가면 잡힘 (난이도 하향)
+                if(this.runCount >= 3) {
+                    this.isCaught = true;
+                    btn.style.transform = 'translate(0,0)'; // 제자리 고정
+                    btn.style.background = '#333';
+                    btn.innerText = "SYSTEM CRITICAL (CLICK)";
+                    msg.innerText = "시스템 오류 발생. 로그아웃이 가능합니다.";
+                    
+                    // 이벤트 제거 및 클릭 시 이동 설정
+                    btn.onmouseover = null;
                     btn.onclick = () => this.next('scene-3');
-                    btn.onmouseover = null; // 더 이상 안 도망감
+                    return;
                 }
+
+                // 버튼 랜덤 이동
+                const x = (Math.random() - 0.5) * 150; 
+                const y = (Math.random() - 0.5) * 150;
+                btn.style.transform = `translate(${x}px, ${y}px)`;
             }
 
-            // Scene 3: 현실로 복귀
+            // Scene 3: 현실 복귀
             wakeUp() {
-                document.getElementById('screen-crack').classList.add('broken');
+                const crack = document.getElementById('screen-crack');
+                crack.classList.add('broken'); 
+                
                 setTimeout(() => {
                     this.next('end');
                 }, 2000);
             }
         }
 
-        const game = new MetaverseGame();
+        window.game = new MetaverseGame();
     </script>
 </body>
 </html>
