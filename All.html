@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE BLOCK: OMNIBUS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: #111;
+            --cyan: #00f3ff;
+            --pink: #ff0055;
+            --gold: #ffd700;
+            --green: #00ff88;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; text-decoration: none; }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 40px 20px;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* 헤더 */
+        header { text-align: center; margin-bottom: 50px; animation: fadeIn 1s; }
+        h1 { 
+            font-family: 'Orbitron', sans-serif; font-size: 3rem; 
+            background: linear-gradient(to right, var(--cyan), #fff, var(--pink));
+            -webkit-background-clip: text; color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 10px;
+        }
+        .subtitle { letter-spacing: 5px; color: #888; font-size: 0.9rem; text-transform: uppercase; }
+
+        /* 그리드 레이아웃 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%; max-width: 1200px;
+        }
+
+        /* 챕터 카드 */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            height: 220px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cyan);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.1);
+        }
+
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: #333; transition: 0.3s;
+        }
+        .card:hover::before { background: var(--cyan); }
+
+        /* 카드 내용 */
+        .chapter-num { font-size: 0.8rem; color: #666; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .card h2 { font-size: 1.5rem; margin-bottom: 10px; font-family: 'Orbitron'; }
+        .desc { font-size: 0.9rem; color: #aaa; line-height: 1.5; margin-bottom: 20px; flex: 1; }
+
+        /* 상태별 색상 */
+        .c-1:hover { border-color: var(--cyan); } .c-1:hover::before { background: var(--cyan); } .c-1 h2 { color: var(--cyan); }
+        .c-2:hover { border-color: var(--green); } .c-2:hover::before { background: var(--green); } .c-2 h2 { color: var(--green); }
+        .c-3:hover { border-color: #ff9a9e; } .c-3:hover::before { background: #ff9a9e; } .c-3 h2 { color: #ff9a9e; }
+        .c-4:hover { border-color: #ffb000; } .c-4:hover::before { background: #ffb000; } .c-4 h2 { color: #ffb000; }
+        .c-5:hover { border-color: var(--pink); } .c-5:hover::before { background: var(--pink); } .c-5 h2 { color: var(--pink); }
+        .c-6:hover { border-color: var(--gold); } .c-6:hover::before { background: var(--gold); } .c-6 h2 { color: var(--gold); }
+        .c-jam:hover { border-color: #fff; } .c-jam:hover::before { background: #fff; } .c-jam h2 { color: #fff; }
+
+        /* 실행 버튼 */
+        .play-btn {
+            background: #222; color: #fff; padding: 10px 0; text-align: center;
+            border-radius: 6px; font-weight: bold; letter-spacing: 1px;
+            transition: 0.2s; display: block; width: 100%;
+            border: 1px solid #444;
+        }
+        .card:hover .play-btn { background: #fff; color: #000; border-color: #fff; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+            .card { height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="manual.html" target="_blank" style="
+        position: fixed; top: 15px; right: 15px; z-index: 10000;
+        background: rgba(0, 0, 0, 0.8); color: #fff; text-decoration: none;
+        padding: 8px 15px; border: 1px solid #fff; border-radius: 4px;
+        font-family: sans-serif; font-size: 12px; font-weight: bold;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); transition: 0.2s;
+        display: flex; align-items: center; gap: 5px; cursor: pointer;
+    " onmouseover="this.style.background='#fff'; this.style.color='#000';" 
+       onmouseout="this.style.background='rgba(0,0,0,0.8)'; this.style.color='#fff';">
+        <i class="fas fa-book"></i> MANUAL
+    </a>
+    <header>
+        <h1>THE BLOCK</h1>
+        <div class="subtitle">INTERACTIVE MOVIE SAGA : COMPLETE EDITION</div>
+    </header>
+
+    <div class="grid">
+        <a href="index.html" class="card c-1">
+            <div class="chapter-num">EPISODE 01</div>
+            <h2>SATOSHI CITY</h2>
+            <div class="desc">청산의 벽과 채굴장. 모든 전설의 시작.</div>
+            <div class="play-btn"><i class="fas fa-play"></i> START</div>
+        </a>
+
+        <a href="sequel_game.html" class="card c-2">
+            <div class="chapter-num">EPISODE 02</div>
+            <h2>THE REVENGE</h2>
+            <div class="desc">시스템의 버그가 되어라. 글리치 해킹.</div>
+            <div class="play-btn"><i class="fas fa-bug"></i> INJECT</div>
+        </a>
+
+        <a href="metaverse_game.html" class="card c-3">
+            <div class="chapter-num">EPISODE 03</div>
+            <h2>METAVERSE</h2>
+            <div class="desc">무한 수익의 감옥. 가짜 낙원 탈출기.</div>
+            <div class="play-btn"><i class="fas fa-vr-cardboard"></i> DIVE</div>
+        </a>
+
+        <a href="wasteland_game.html" class="card c-4">
+            <div class="chapter-num">EPISODE 04</div>
+            <h2>REALITY</h2>
+            <div class="desc">황무지 서바이벌. 배터리 관리와 암호 해독.</div>
+            <div class="play-btn"><i class="fas fa-radiation"></i> SURVIVE</div>
+        </a>
+
+        <a href="final_battle.html" class="card c-5">
+            <div class="chapter-num">EPISODE 05</div>
+            <h2>ZERO SUM</h2>
+            <div class="desc">보스 오상무와의 최종 결전. 홀짝 도박.</div>
+            <div class="play-btn"><i class="fas fa-skull"></i> FIGHT</div>
+        </a>
+
+        <a href="epilogue_god.html" class="card c-6">
+            <div class="chapter-num">EPILOGUE</div>
+            <h2>NEW GOD</h2>
+            <div class="desc">새로운 설계자가 된 당신. 영원한 순환.</div>
+            <div class="play-btn"><i class="fas fa-crown"></i> CONTROL</div>
+        </a>
+
+        <a href="JAM.html" class="card c-jam">
+            <div class="chapter-num">APPENDIX</div>
+            <h2>JAM LOG</h2>
+            <div class="desc">1급 기밀 작전 일지 및 자산 보고서.</div>
+            <div class="play-btn"><i class="fas fa-file-alt"></i> READ</div>
+        </a>
+    </div>
+
+    <footer style="margin-top: 50px; color: #444; font-size: 0.8rem;">
+        SYSTEM ARCHITECT: USER & AI | PROJECT: THE BLOCK
+    </footer>
+
+</body>
+</html>
