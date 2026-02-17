@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BLOCK 4: REALITY (FIXED)</title>
+    <title>THE BLOCK 4: REALITY (MANUAL)</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
             --scanline: rgba(0,0,0,0.5);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background-color: var(--bg); color: var(--term-green); 
@@ -33,11 +33,12 @@
         @keyframes flicker { 0% { opacity: 0.9; } 50% { opacity: 1.0; } 100% { opacity: 0.9; } }
         body { animation: flicker 0.2s infinite; }
 
-        /* 상태바 */
+        /* 상단 상태바 (HUD) */
         .hud {
             padding: 15px; border-bottom: 2px solid var(--term-green);
             display: flex; justify-content: space-between; font-size: 1.2rem;
             background: #000; z-index: 100;
+            position: relative; /* 매뉴얼 버튼과 겹치지 않게 */
         }
         .energy-bar { color: var(--term-amber); }
 
@@ -78,6 +79,18 @@
     </style>
 </head>
 <body>
+
+    <a href="manual.html" target="_blank" style="
+        position: fixed; bottom: 20px; right: 20px; z-index: 10000;
+        background: #000; color: var(--term-green); text-decoration: none;
+        padding: 8px 15px; border: 1px solid var(--term-green); 
+        font-family: 'VT323', monospace; font-size: 1.2rem;
+        box-shadow: 0 0 10px var(--term-green); transition: 0.2s;
+        display: flex; align-items: center; gap: 5px; cursor: pointer;
+    " onmouseover="this.style.background='var(--term-green)'; this.style.color='#000';" 
+       onmouseout="this.style.background='#000'; this.style.color='var(--term-green)';">
+        <i class="fas fa-book"></i> MANUAL
+    </a>
 
     <div class="sandstorm"></div>
 
@@ -136,7 +149,7 @@
     <div id="scene-end" class="screen">
         <h1 id="end-title" style="font-size:3rem; margin-bottom:20px;"></h1>
         <div id="end-desc" class="log-box" style="text-align:center;"></div>
-        <button class="btn" onclick="location.reload()">RESTART SIMULATION</button>
+        <button class="btn" onclick="location.href='final_battle.html'">NEXT CHAPTER (FINAL)</button>
     </div>
 
     <script>
@@ -148,7 +161,6 @@
                 this.tryCount = 5;
             }
 
-            // 장면 이동 (배터리 소모)
             move(id) {
                 this.battery -= 10;
                 this.updateBat();
@@ -173,7 +185,6 @@
                 }
             }
 
-            // 해킹 시작
             startHack() {
                 this.battery -= 20; 
                 this.updateBat();
@@ -185,7 +196,6 @@
                 }
             }
 
-            // 키패드 입력
             inputKey(num) {
                 if(this.currentInput.length < 3) this.currentInput += num.toString();
                 this.updateDisplay();
@@ -193,7 +203,6 @@
             clearKey() { this.currentInput = ""; this.updateDisplay(); }
             updateDisplay() { document.getElementById('input-display').innerText = this.currentInput.padEnd(3, '_'); }
 
-            // 정답 확인
             checkKey() {
                 if(this.currentInput.length !== 3) return;
                 
@@ -211,7 +220,7 @@
                     this.tryCount--;
                     if(this.tryCount <= 0) {
                         alert("보안 시스템 작동! 단말기가 폭발했습니다.");
-                        this.battery -= 30; // 폭발 데미지
+                        this.battery -= 30;
                         this.move('scene-3');
                     } else {
                         if(val < this.passcode) hint.innerText = `UP (기회 ${this.tryCount}번)`;
@@ -223,7 +232,6 @@
                 }
             }
 
-            // 엔딩 처리
             ending(type) {
                 this.show('scene-end');
                 const title = document.getElementById('end-title');
@@ -245,7 +253,6 @@
             }
         }
 
-        // [중요] 게임 인스턴스를 전역 변수로 선언 (버그 수정)
         window.game = new WastelandGame();
     </script>
 </body>
