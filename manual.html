@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE BLOCK: MANUAL</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --panel: #111;
+            --text: #00ff41; /* 해커 그린 */
+            --accent: #008f11;
+            --highlight: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Share Tech Mono', 'Noto Sans KR', monospace;
+            padding: 20px;
+            line-height: 1.6;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid var(--text);
+            padding: 2px; /* 이중 테두리 효과 */
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .inner-box {
+            border: 1px solid var(--accent);
+            padding: 30px;
+            background: rgba(0, 20, 0, 0.8);
+        }
+
+        /* 헤더 */
+        header {
+            border-bottom: 2px dashed var(--accent);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h1 { font-size: 2rem; letter-spacing: 2px; margin-bottom: 10px; color: var(--highlight); text-shadow: 0 0 10px var(--text); }
+        .sub { font-size: 0.9rem; opacity: 0.8; }
+
+        /* 아코디언 스타일 (상세 내용 접기/펼치기) */
+        details {
+            margin-bottom: 15px;
+            border: 1px solid var(--accent);
+            background: #000;
+            transition: 0.3s;
+        }
+        details[open] { border-color: var(--highlight); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+
+        summary {
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            list-style: none;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        summary:hover { background: rgba(0, 255, 65, 0.1); color: var(--highlight); }
+        summary::after { content: '+'; font-size: 1.5rem; }
+        details[open] summary::after { content: '-'; }
+
+        .content {
+            padding: 20px;
+            border-top: 1px solid var(--accent);
+            color: #ddd;
+            font-size: 0.95rem;
+        }
+
+        /* 강조 텍스트 */
+        .key { color: var(--text); font-weight: bold; border: 1px solid var(--text); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+        .warn { color: #ff3333; font-weight: bold; }
+
+        /* 하단 버튼 */
+        .footer { margin-top: 30px; text-align: center; }
+        .btn {
+            background: var(--text); color: #000;
+            padding: 15px 40px; font-weight: bold; font-family: 'Share Tech Mono';
+            border: none; cursor: pointer; font-size: 1.1rem;
+            transition: 0.2s;
+        }
+        .btn:hover { background: var(--highlight); box-shadow: 0 0 20px var(--text); }
+
+        /* 모바일 대응 */
+        @media (max-width: 600px) {
+            .inner-box { padding: 15px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="inner-box">
+            <header>
+                <h1>OPERATIONAL MANUAL</h1>
+                <div class="sub">PROJECT: THE BLOCK // CLASSIFIED LEVEL 5</div>
+            </header>
+
+            <details>
+                <summary>EPISODE 01: SATOSHI CITY</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 청산당하지 않고 비트코인을 늘려라.</p>
+                    <br>
+                    <ul>
+                        <li><span class="key">LONG</span>: 가격 상승에 배팅 (홀수 확률 높음)</li>
+                        <li><span class="key">SHORT</span>: 가격 하락에 배팅 (짝수 확률 높음)</li>
+                        <li><span class="warn">주의:</span> 10초 안에 선택하지 않으면 강제 청산됩니다.</li>
+                        <li>운에 맡겨야 합니다. 실패 시 [F5]를 눌러 재도전하십시오.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>EPISODE 02: THE REVENGE</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 시스템을 해킹하여 관리자 권한을 탈취하라.</p>
+                    <br>
+                    <ul>
+                        <li><strong>차트 해킹:</strong> <span class="key">GLITCH</span> 버튼을 빠르게 연타하여 게이지를 100% 채우십시오.</li>
+                        <li><strong>퀴즈:</strong> 시스템이 유도하는 'DELETE USER'를 누르면 안 됩니다. <span class="key">ROOT ACCESS</span> 명령어가 정답입니다.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>EPISODE 03: METAVERSE</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 가짜 낙원에서 탈출하라.</p>
+                    <br>
+                    <ul>
+                        <li>처음엔 <span class="key">BUY/SELL</span> 버튼을 눌러 돈을 버십시오.</li>
+                        <li>5회 이상 매매하면 하단에 <strong>회색 경고 버튼</strong>이 나타납니다.</li>
+                        <li><span class="key">LOGOUT</span> 버튼은 마우스를 피해 도망갑니다. 포기하지 말고 <strong>3~5회 계속 쫓아가십시오.</strong></li>
+                        <li>버튼이 검게 변하고 멈추면 클릭하여 탈출할 수 있습니다.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>EPISODE 04: REALITY</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 황무지에서 생존하고 비밀번호를 해독하라.</p>
+                    <br>
+                    <ul>
+                        <li><strong>배터리 관리:</strong> 모든 행동은 배터리를 소모합니다. 신중하게 움직이십시오.</li>
+                        <li><strong>비밀번호(UP/DOWN):</strong> 000~999 사이 숫자입니다.
+                            <br>- <span class="key">500</span> 입력 후 UP이면 501~999, DOWN이면 0~499.
+                            <br>- 범위를 절반씩 줄여나가는 전략이 유효합니다.
+                        </li>
+                        <li><strong>드론 조우 시:</strong> 절대 싸우지 마십시오. <span class="key">죽은 척하기</span>가 유일한 생존법입니다.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>EPISODE 05: ZERO SUM</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 보스 오상무와의 1:1 홀짝 대결.</p>
+                    <br>
+                    <ul>
+                        <li>숫자가 빠르게 회전하다 멈춥니다.</li>
+                        <li><span class="key">홀(ODD)</span> / <span class="key">짝(EVEN)</span> 중 하나를 선택하십시오.</li>
+                        <li>적중 시 상대 체력 감소, 실패 시 내 체력 감소.</li>
+                        <li>상대의 HP를 0으로 만들면 승리합니다.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>EPISODE 06: NEW GOD</summary>
+                <div class="content">
+                    <p><strong>미션:</strong> 새로운 신으로서의 권능 체험.</p>
+                    <br>
+                    <ul>
+                        <li><span class="key">PUMP</span> (폭등) / <span class="key">DUMP</span> (폭락) 버튼을 마음대로 누르십시오.</li>
+                        <li>5회 이상 시장을 조작하면 시스템 경고가 뜹니다.</li>
+                        <li>새로운 도전자(과거의 자신)를 받아들이면 무한 루프가 완성됩니다.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <div class="footer">
+                <button class="btn" onclick="location.href='All.html'">BACK TO MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
